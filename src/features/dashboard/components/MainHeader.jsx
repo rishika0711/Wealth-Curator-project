@@ -1,4 +1,4 @@
-import { Bell, Moon, PanelLeftClose, PanelLeftOpen, Search, Settings, Sun } from 'lucide-react';
+import { Moon, PanelLeftClose, PanelLeftOpen, Search, Sun } from 'lucide-react';
 import { memo } from 'react';
 import { Pressable, StyleSheet as RNStyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native-web';
 import { IconGlyph } from '../../../components/icons/IconGlyph.jsx';
@@ -28,7 +28,7 @@ export const MainHeader = memo(function MainHeader({
   const { width } = useWindowDimensions();
   const compact = width < 720;
 
-  const clientSubtitle = (user.planTier || 'Private client').split('·')[0]?.trim() || 'Private client';
+  const clientSubtitle = (user.planTier).split('·')[0]?.trim();
 
   return (
     <View style={[styles.shell, { backgroundColor: colors.bg, borderBottomColor: colors.border }]} accessibilityRole="header">
@@ -75,30 +75,6 @@ export const MainHeader = memo(function MainHeader({
 
         <View style={[styles.rightCluster, compact && styles.rightClusterWide]}>
           <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Notifications"
-            style={({ hovered, pressed }) => [
-              styles.iconBtn,
-              { borderColor: colors.border, backgroundColor: colors.bgElevated },
-              hovered && styles.hover,
-              pressed && styles.pressed,
-            ]}
-          >
-            <IconGlyph icon={Bell} size={20} color={colors.textMuted} strokeWidth={2} />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Settings"
-            style={({ hovered, pressed }) => [
-              styles.iconBtn,
-              { borderColor: colors.border, backgroundColor: colors.bgElevated },
-              hovered && styles.hover,
-              pressed && styles.pressed,
-            ]}
-          >
-            <IconGlyph icon={Settings} size={20} color={colors.textMuted} strokeWidth={2} />
-          </Pressable>
-          <Pressable
             onPress={onToggleTheme}
             accessibilityRole="button"
             accessibilityLabel={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -114,21 +90,16 @@ export const MainHeader = memo(function MainHeader({
           <Pressable
             onPress={onProfileAvatarPress}
             accessibilityRole="button"
-            accessibilityLabel={`Profile: ${user.name}`}
+            accessibilityLabel={`Profile: ${user.initials}. ${clientSubtitle}`}
             style={({ hovered, pressed }) => [styles.userBlock, hovered && styles.hover, pressed && styles.pressed]}
           >
             <View style={[styles.avatar, { borderColor: colors.border, backgroundColor: colors.bgElevated }]}>
               <Text style={[styles.avatarText, { color: colors.text }]}>{user.initials}</Text>
             </View>
             {!compact ? (
-              <View style={styles.userText}>
-                <Text style={[styles.userName, { color: colors.text }]} numberOfLines={1}>
-                  {user.name}
-                </Text>
-                <Text style={[styles.userSub, { color: colors.textMuted }]} numberOfLines={1}>
-                  {clientSubtitle.toUpperCase()}
-                </Text>
-              </View>
+              <Text style={[styles.userSubOnly, { color: colors.textMuted }]} numberOfLines={2}>
+                {clientSubtitle.toUpperCase()}
+              </Text>
             ) : null}
           </Pressable>
         </View>
@@ -244,9 +215,13 @@ const styles = RNStyleSheet.create({
     justifyContent: 'center',
   },
   avatarText: { fontFamily: font.sans, fontSize: 14, fontWeight: '700' },
-  userText: { maxWidth: 160 },
-  userName: { fontFamily: font.sans, fontSize: 14, fontWeight: '800' },
-  userSub: { fontFamily: font.sans, fontSize: 10, fontWeight: '700', letterSpacing: 1.4, marginTop: 2 },
+  userSubOnly: {
+    fontFamily: font.sans,
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1.4,
+    maxWidth: 140,
+  },
   tabRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
